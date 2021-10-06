@@ -1,11 +1,11 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 
 public class WackServer extends Thread {
     ServerSocket serverSocket;
+    Database database = new Database();
 
     public WackServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -46,10 +46,10 @@ public class WackServer extends Thread {
                 while (!interrupted()) {
                     byte[] data = new byte[1024];
                     bis.read(data);
-                    System.out.println("server:" + new String (data, StandardCharsets.UTF_8 ));
-                    sleep(500);
+
+
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 System.err.println();
             }
             try {

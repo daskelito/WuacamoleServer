@@ -56,7 +56,7 @@ public class Client implements Serializable {
                 new listener().start();
 
                 while (!Thread.interrupted()) {
-                    send("kdsjfhgö");
+                    send("Message from client");
                     sleep(300);
                 }
             } catch (IOException | InterruptedException e) {
