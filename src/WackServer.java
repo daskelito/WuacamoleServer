@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 
 public class WackServer extends Thread {
@@ -28,21 +29,23 @@ public class WackServer extends Thread {
     //private class to start a thread for each client
     private class ClientHandler extends Thread {
         private Socket socket;
-        private DataInputStream dis;
-        private DataOutputStream dos;
+        private BufferedOutputStream bos;
+        private BufferedInputStream bis;
 
 
         public ClientHandler(Socket socket) throws IOException {
             this.socket = socket;
-            dos = new DataOutputStream(socket.getOutputStream());
-            dis = new DataInputStream(socket.getInputStream());
+
+            bos = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
+            bis = new BufferedInputStream(new DataInputStream(socket.getInputStream()));
             start();
         }
 
         public void run() {
             try {
                 while (!interrupted()) {
-                    byte[] data = dis.readAllBytes();
+                    byte[] data = new byte[1024];
+                    bis.read(data);
                     System.out.println("server:" + new String (data, StandardCharsets.UTF_8 ));
                     sleep(500);
                 }

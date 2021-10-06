@@ -52,12 +52,14 @@ public class Client implements Serializable {
                 Socket socket = new Socket(ip, port);
                 dos = new DataOutputStream(socket.getOutputStream());
                 dis = new DataInputStream(socket.getInputStream());
+
                 new listener().start();
 
                 while (!Thread.interrupted()) {
-
+                    send("kdsjfhgö");
+                    sleep(300);
                 }
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -70,12 +72,8 @@ public class Client implements Serializable {
         @Override
         public void run() {
             while (!Thread.interrupted()) {
-                send("afsafsfasfas");
-                try {
-                    sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+
             }
         }
     }
