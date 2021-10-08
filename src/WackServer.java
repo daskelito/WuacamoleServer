@@ -27,21 +27,23 @@ public class WackServer extends Thread {
         }
     }
 
-    public void interpretMessage(byte[] data) {
-        String s = new String(data, StandardCharsets.UTF_8);
-        String to = "" + s.charAt(0) + s.charAt(1);
-        String from = "" + s.charAt(3) + s.charAt(4);
-        String mtype = "" + s.charAt(6);
+    public void interpretMessage(byte[] bytedata) {
+        String data = new String(bytedata, StandardCharsets.UTF_8);
+        String to = "" + data.charAt(0) + data.charAt(1);
+        String from = "" + data.charAt(3) + data.charAt(4);
+        String mtype = "" + data.charAt(6);
 
         switch (mtype) {
             case "1": //new node
                 Node n = new Node(from);
                 n.setStatus("CONNECTED");
                 database.addNode(n);
-                sendMessage(from, "1", "doesnt matter");
+                sendMessageToAll(from, "1", "xxxxxxxxx");
                 break;
             case "2": //keep alive
-
+            case "6": //start game
+            case "7": //stop game
+                sendMessageToAll(from, mtype, data);
                 break;
             case "3": //mole active
 
@@ -52,18 +54,19 @@ public class WackServer extends Thread {
             case "5": //mole miss
 
                 break;
-            case "6": //start game
-
-                break;
-            case "7": //stop game
-
-                break;
         }
     }
 
     // Format: [to(00-15]x[from(00-15)]x[message type(1-7)]x[data]
+    public void sendMessage(String to, String from, String messageType, String data){
+        String message = "" + "to" + 'x' + "from" + 'x' + messageType + 'x' + data;
+        //TODO
+        //Send message to the right receiver
+    }
+
+    // Format: [to(00-15]x[from(00-15)]x[message type(1-7)]x[data]
     // first 2 chars are "to" and modified in the function
-    public void sendMessage(String from, String messageType, String data) {
+    public void sendMessageToAll(String from, String messageType, String data) {
         String message = "" + "xxx" + "from" + 'x' + messageType + 'x' + data;
         StringBuilder sb = new StringBuilder(message);
         ArrayList<Node> list = database.getAllOtherNodes(from);
@@ -71,6 +74,7 @@ public class WackServer extends Thread {
             sb.setCharAt(0, n.getID().charAt(0));
             sb.setCharAt(1, n.getID().charAt(1));
             String messageToSend = sb.toString();
+            //TODO
             //send messageToSend to all other nodes via this loop
         }
     }

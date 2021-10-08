@@ -34,9 +34,9 @@ public class Database {
     }
 
     public void print(){
-        System.out.println(nodes);
+        for(Node n : nodes) {
+            System.out.println("Node " + n.getID());
+        }
     }
-
-
 
 }
