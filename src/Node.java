@@ -1,14 +1,14 @@
 import java.util.UUID;
 
 public class Node {
-    private final UUID ID;
+    private final String ID;
     private String status;
 
-    public Node() {
-        ID = UUID.randomUUID();
+    public Node(String ID) {
+        this.ID = ID;
     }
 
-    public UUID getID() {
+    public String getID() {
         return ID;
     }
 
@@ -16,6 +16,10 @@ public class Node {
         if (status == "CONNECTED" || status == "DISCONNECTED") {
             this.status = status;
         }
+    }
+
+    public String getStatus(String status){
+        return status;
     }
 
 

@@ -1,21 +1,41 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
 public class Database {
-    private HashMap<UUID, Node> nodes;
+    private ArrayList<Node> nodes;
 
     public Database() {
-        nodes = new HashMap<UUID, Node>();
+        nodes = new ArrayList<Node>();
     }
 
     public void addNode(Node node){
-        nodes.put(node.getID(), node);
+        nodes.add(node);
     }
 
-    public Node getNode(UUID uuid){
-        return nodes.get(uuid);
+    public Node getNode(String ID){
+        for(Node n : nodes){
+            if(n.getID() == ID){
+                return n;
+            }
+        }
+        return null;
     }
 
+    public ArrayList<Node> getAllOtherNodes(String ID){
+        ArrayList<Node> templist = new ArrayList<Node>();
+        for(Node n : nodes){
+            if(n.getID() != ID){
+                templist.add(n);
+            }
+        }
+        return templist;
+    }
+
+    public void print(){
+        System.out.println(nodes);
+    }
 
 
 
