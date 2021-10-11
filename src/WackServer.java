@@ -5,13 +5,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class WackServer extends Thread {
-    ServerSocket serverSocket;
-    Database database = new Database();
+    private ServerSocket serverSocket;
+    private Database database = new Database();
+    private int chIndex = 0;
 
     public WackServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         this.start();
         System.out.println("Server started on port " + port);
+
     }
 
     //thread to listen for new clients connecting, creates an instance of ClientHandler if found
@@ -27,69 +29,88 @@ public class WackServer extends Thread {
         }
     }
 
+
+
     public void interpretMessage(byte[] bytedata) {
         String data = new String(bytedata, StandardCharsets.UTF_8);
-        String to = "" + data.charAt(0) + data.charAt(1);
-        String from = "" + data.charAt(3) + data.charAt(4);
-        String mtype = "" + data.charAt(6);
+        StringBuilder sb = new StringBuilder(data);
+        String to = "" + sb.substring(1, 2);
+        String from = "" + sb.substring(4, 5);
+        String mtype = "" + sb.substring(7, 7);
+        String message = "" + sb.substring(9, 14);
 
+        //case 1 exists only for logging, its handled during initial connection via the socket
         switch (mtype) {
-            case "1": //new node
-                Node n = new Node(from);
-                n.setStatus("CONNECTED");
-                database.addNode(n);
-                sendMessageToAll(from, "1", "xxxxxxxxx");
-                break;
             case "2": //keep alive
+            case "3": //mole active
+            case "4": //mole hit
+            case "5": //mole miss
             case "6": //start game
             case "7": //stop game
-                sendMessageToAll(from, mtype, data);
+                sendMessageToAll(from, mtype, message);
                 break;
-            case "3": //mole active
-
+            case "8": //node disconnected
+                String index = "" + data.charAt(8) + data.charAt(9);
+                Node m = database.getNode(index);
+                m.setStatus("DISCONNECTED");
                 break;
-            case "4": //mole hit
-
-                break;
-            case "5": //mole miss
+            case "9": //mole diff status
 
                 break;
         }
+        //log data
     }
 
-    // Format: [to(00-15]x[from(00-15)]x[message type(1-7)]x[data]
-    public void sendMessage(String to, String from, String messageType, String data){
-        String message = "" + "to" + 'x' + "from" + 'x' + messageType + 'x' + data;
+    // Format: +[to(00-15]x[from(00-15)]x[message type(1-7)]x[data]-
+    public void sendMessage(String to, String from, String messageType, String data) {
+        String message = "+" + "to" + 'x' + "from" + 'x' + messageType + 'x' + data + "-";
         //TODO
         //Send message to the right receiver
     }
 
     // Format: [to(00-15]x[from(00-15)]x[message type(1-7)]x[data]
     // first 2 chars are "to" and modified in the function
-    public void sendMessageToAll(String from, String messageType, String data) {
-        String message = "" + "xxx" + "from" + 'x' + messageType + 'x' + data;
+    public void sendMessageToAll(String from, String messageType, String data)  {
+        String message = "+" + "xxx" + "from" + 'x' + messageType + 'x' + data + "-";
         StringBuilder sb = new StringBuilder(message);
         ArrayList<Node> list = database.getAllOtherNodes(from);
         for (Node n : list) {
-            sb.setCharAt(0, n.getID().charAt(0));
             sb.setCharAt(1, n.getID().charAt(1));
+            sb.setCharAt(2, n.getID().charAt(2));
             String messageToSend = sb.toString();
-            //TODO
-            //send messageToSend to all other nodes via this loop
+            ClientHandler ch = n.getClientHandler();
+            try {
+                ch.bos.write(messageToSend.getBytes(StandardCharsets.UTF_8));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     //private class to start a thread for each client
-    private class ClientHandler extends Thread {
+    public class ClientHandler extends Thread {
         private Socket socket;
         private BufferedOutputStream bos;
         private BufferedInputStream bis;
+
 
         public ClientHandler(Socket socket) throws IOException {
             this.socket = socket;
             System.out.println("BASS");
             bos = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
             bis = new BufferedInputStream(new DataInputStream(socket.getInputStream()));
+
+            int index = chIndex;
+            String i = "";
+            if (index < 10) {
+                i = "0";
+            }
+            i += index;
+            Node n = new Node(i);
+            n.setClientHandler(this);
+            n.setStatus("CONNECTED");
+            database.addNode(n);
+
             start();
         }
 
