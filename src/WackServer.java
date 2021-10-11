@@ -13,7 +13,6 @@ public class WackServer extends Thread {
         serverSocket = new ServerSocket(port);
         this.start();
         System.out.println("Server started on port " + port);
-
     }
 
     //thread to listen for new clients connecting, creates an instance of ClientHandler if found
@@ -28,8 +27,6 @@ public class WackServer extends Thread {
             }
         }
     }
-
-
 
     public void interpretMessage(byte[] bytedata) {
         String data = new String(bytedata, StandardCharsets.UTF_8);
@@ -58,19 +55,12 @@ public class WackServer extends Thread {
 
                 break;
         }
-        //log data
-    }
-
-    // Format: +[to(00-15]x[from(00-15)]x[message type(1-7)]x[data]-
-    public void sendMessage(String to, String from, String messageType, String data) {
-        String message = "+" + "to" + 'x' + "from" + 'x' + messageType + 'x' + data + "-";
-        //TODO
-        //Send message to the right receiver
+        System.out.println("Message sent from node " + from + " to all others with message type " + mtype);
     }
 
     // Format: [to(00-15]x[from(00-15)]x[message type(1-7)]x[data]
     // first 2 chars are "to" and modified in the function
-    public void sendMessageToAll(String from, String messageType, String data)  {
+    public void sendMessageToAll(String from, String messageType, String data) {
         String message = "+" + "xxx" + "from" + 'x' + messageType + 'x' + data + "-";
         StringBuilder sb = new StringBuilder(message);
         ArrayList<Node> list = database.getAllOtherNodes(from);
@@ -134,3 +124,10 @@ public class WackServer extends Thread {
         }
     }
 }
+
+//    // Format: +[to(00-15]x[from(00-15)]x[message type(1-7)]x[data]-
+//    public void sendMessage(String to, String from, String messageType, String data) {
+//        String message = "+" + "to" + 'x' + "from" + 'x' + messageType + 'x' + data + "-";
+//        //TODO
+//        //Send message to the right receiver
+//    }
