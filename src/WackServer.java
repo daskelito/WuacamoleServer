@@ -82,6 +82,8 @@ public class WackServer extends Thread {
         private Socket socket;
         private BufferedOutputStream bos;
         private BufferedInputStream bis;
+        private InputStreamReader isr;
+        private OutputStreamWriter osw;
 
 
         public ClientHandler(Socket socket) throws IOException {
@@ -89,6 +91,9 @@ public class WackServer extends Thread {
             System.out.println("BASS");
             bos = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
             bis = new BufferedInputStream(new DataInputStream(socket.getInputStream()));
+
+            isr = new InputStreamReader(socket.getInputStream());
+            osw = new OutputStreamWriter(socket.getOutputStream());
 
             int index = chIndex;
             String i = "";
@@ -105,12 +110,18 @@ public class WackServer extends Thread {
         }
 
         public void run() {
+            BufferedReader br = new BufferedReader(isr);
             try {
                 while (!interrupted()) {
-                    byte[] data = new byte[1024];
-                    if (bis.read(data) != -1) {
-                        interpretMessage(data);
-                    }
+                    //byte[] data = new byte[1024];
+                    //if (bis.read(data) != -1) {
+                     //   interpretMessage(data);
+                   // }
+                    String s = br.readLine();
+                    if (s != null) {
+                        System.out.println(s);
+                     }
+
                 }
             } catch (IOException e) {
                 System.err.println();
