@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
@@ -8,6 +9,7 @@ public class WackServer extends Thread {
     private ServerSocket serverSocket;
     private Database database = new Database();
     private int chIndex = 0;
+    private int nodeIDindex = 1;
 
     public WackServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -88,7 +90,7 @@ public class WackServer extends Thread {
 
         public ClientHandler(Socket socket) throws IOException {
             this.socket = socket;
-            System.out.println("BASS");
+            System.out.println("Handler and socket established.");
             bos = new BufferedOutputStream(new DataOutputStream(socket.getOutputStream()));
             bis = new BufferedInputStream(new DataInputStream(socket.getInputStream()));
 
@@ -111,16 +113,23 @@ public class WackServer extends Thread {
 
         public void run() {
             BufferedReader br = new BufferedReader(isr);
+            BufferedWriter bw = new BufferedWriter(osw);
+
             try {
-                while (!interrupted()) {
+                while (true) {
                     //byte[] data = new byte[1024];
                     //if (bis.read(data) != -1) {
-                     //   interpretMessage(data);
-                   // }
+                    //   interpretMessage(data);
+                    // }
                     String s = br.readLine();
                     if (s != null) {
-                        System.out.println(s);
-                     }
+                        if (s.contains("index")) {
+                            bw.write(nodeIDindex);
+                            bw.flush();
+                            System.out.println("index " + nodeIDindex + " sent.");
+                            nodeIDindex++;
+                        }
+                    }
 
                 }
             } catch (IOException e) {
@@ -132,6 +141,7 @@ public class WackServer extends Thread {
             } catch (Exception e) {
                 System.err.println();
             }
+
         }
     }
 }
