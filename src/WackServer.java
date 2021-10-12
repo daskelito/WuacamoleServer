@@ -36,7 +36,7 @@ public class WackServer extends Thread {
         String mtype = "" + sb.substring(7, 7);
         String message = "" + sb.substring(9, 14);
 
-        //case 1 exists only for logging, its handled during initial connection via the socket
+        //case 1 exists only for logging, it's handled during initial connection via the socket
         switch (mtype) {
             case "2": //keep alive
             case "3": //mole active
