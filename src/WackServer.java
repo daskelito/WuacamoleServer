@@ -3,10 +3,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WackServer extends Thread {
-    private ServerSocket serverSocket;
-    private Database database = new Database();
+    private final ServerSocket serverSocket;
+    private final StringBuilder sb;
     private int nodeIDindex = 1;
-    private StringBuilder sb;
+
+    public static void main(String[] args) throws IOException {
+        WackServer ws = new  WackServer(5008);
+    }
 
     public WackServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
@@ -40,14 +43,12 @@ public class WackServer extends Thread {
 
             isr = new InputStreamReader(socket.getInputStream());
             osw = new OutputStreamWriter(socket.getOutputStream());
-
             start();
         }
 
         public void run() {
             BufferedReader br = new BufferedReader(isr);
             BufferedWriter bw = new BufferedWriter(osw);
-
             try {
                 while (true) {
                     String s = br.readLine();
@@ -55,7 +56,7 @@ public class WackServer extends Thread {
                         if (s.contains("index")) {
                             bw.write(nodeIDindex);
                             bw.flush();
-                            System.out.println("index " + nodeIDindex + " sent.");
+                            System.out.println("Index: " + nodeIDindex + " sent.");
                             nodeIDindex++;
                         } else if (s.contains("result")) {
                             sb.append(s);

@@ -1,7 +1,3 @@
 import java.io.IOException;
 
-public class main {
-    public static void main(String[] args) throws IOException {
-        WackServer ws = new  WackServer(5008);
-    }
-}
+
