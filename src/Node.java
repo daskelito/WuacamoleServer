@@ -23,13 +23,12 @@ public class Node {
         return status;
     }
 
-    public void setClientHandler(WackServer.ClientHandler ch){
-        this.ch = ch;
-    }
-
-    public WackServer.ClientHandler getClientHandler(){
-        return ch;
-    }
-
-
 }
+
+//    public void setClientHandler(WackServer.ClientHandler ch){
+//        this.ch = ch;
+//    }
+//
+//    public WackServer.ClientHandler getClientHandler(){
+//        return ch;
+//    }
