@@ -6,11 +6,13 @@ public class WackServer extends Thread {
     private ServerSocket serverSocket;
     private Database database = new Database();
     private int nodeIDindex = 1;
+    private StringBuilder sb;
 
     public WackServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         this.start();
         System.out.println("Server started on port " + port);
+        sb = new StringBuilder();
     }
 
     //thread to listen for new clients connecting, creates an instance of ClientHandler if found
@@ -55,6 +57,10 @@ public class WackServer extends Thread {
                             bw.flush();
                             System.out.println("index " + nodeIDindex + " sent.");
                             nodeIDindex++;
+                        } else if (s.contains("result")) {
+                            sb.append(s);
+                            s = sb.substring(6, 8);
+                            System.out.println("Score from round: " + s);
                         }
                     }
                 }
@@ -97,7 +103,7 @@ public class WackServer extends Thread {
 //        String mtype = "" + sb.substring(7, 7);
 //        String message = "" + sb.substring(9, 14);
 
-        //case 1 exists only for logging, it's handled during initial connection via the socket
+//case 1 exists only for logging, it's handled during initial connection via the socket
 //        switch (mtype) {
 //            case "2": //keep alive
 //            case "3": //mole active
