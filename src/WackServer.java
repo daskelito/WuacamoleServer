@@ -3,12 +3,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class WackServer extends Thread {
+    private static StringBuilder sb;
     private final ServerSocket serverSocket;
-    private final StringBuilder sb;
     private int nodeIDindex = 1;
 
     public static void main(String[] args) throws IOException {
-        WackServer ws = new  WackServer(5008);
+       WackServer ws = new  WackServer(5008);
+
     }
 
     public WackServer(int port) throws IOException {
@@ -16,6 +17,16 @@ public class WackServer extends Thread {
         this.start();
         System.out.println("Server started on port " + port);
         sb = new StringBuilder();
+    }
+
+    public static String convertResult(String text){
+        sb = new StringBuilder();
+        for(int i = 0; i < 3; i++){
+            if(text.charAt(i) != 'x'){
+                sb.append(text.charAt(i));
+            }
+        }
+        return sb.toString();
     }
 
     //thread to listen for new clients connecting, creates an instance of ClientHandler if found
@@ -50,7 +61,8 @@ public class WackServer extends Thread {
             BufferedReader br = new BufferedReader(isr);
             BufferedWriter bw = new BufferedWriter(osw);
             try {
-                while (true) {
+                while (!interrupted()) {
+                    sleep(50);
                     String s = br.readLine();
                     if (s != null) {
                         if (s.contains("index")) {
@@ -60,12 +72,13 @@ public class WackServer extends Thread {
                             nodeIDindex++;
                         } else if (s.contains("result")) {
                             sb.append(s);
-                            s = sb.substring(6, 8);
-                            System.out.println("Score from round: " + s);
+                            s = sb.substring(6, 9);
+                            String result = convertResult(s);
+                            System.out.println("Score from round: " + result);
                         }
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 System.err.println();
             }
             try {
