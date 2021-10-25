@@ -5,13 +5,14 @@ import java.net.Socket;
 public class WackServer extends Thread {
     private static StringBuilder sb;
     private final ServerSocket serverSocket;
-    private int nodeIDindex = 1;
+    private int nodeIDindex = 10;
 
+    //Main method for starting the server on the given port.
     public static void main(String[] args) throws IOException {
        WackServer ws = new  WackServer(5008);
-
     }
 
+    //Constructor for the server. Establishes a socket and prints what port it's started on.
     public WackServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         this.start();
@@ -19,6 +20,7 @@ public class WackServer extends Thread {
         sb = new StringBuilder();
     }
 
+    //Converts the incoming string from a node into a sensible string that can be printed and read.
     public static String convertResult(String text){
         sb = new StringBuilder();
         for(int i = 0; i < 3; i++){
@@ -29,7 +31,7 @@ public class WackServer extends Thread {
         return sb.toString();
     }
 
-    //thread to listen for new clients connecting, creates an instance of ClientHandler if found
+    //Thread to listen for new clients connecting, creates an instance of ClientHandler if found.
     public void run() {
         while (true) {
             try {
@@ -64,6 +66,7 @@ public class WackServer extends Thread {
                 while (!interrupted()) {
                     sleep(50);
                     String s = br.readLine();
+                    //Two cases: either a node requesting an index or a node sending result from the game round.
                     if (s != null) {
                         if (s.contains("index")) {
                             bw.write(nodeIDindex);
