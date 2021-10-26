@@ -9,7 +9,7 @@ public class WackServer extends Thread {
 
     //Main method for starting the server on the given port.
     public static void main(String[] args) throws IOException {
-       WackServer ws = new  WackServer(5008);
+        WackServer ws = new WackServer(5008);
     }
 
     //Constructor for the server. Establishes a socket and prints what port it's started on.
@@ -21,10 +21,10 @@ public class WackServer extends Thread {
     }
 
     //Converts the incoming string from a node into a sensible string that can be printed and read.
-    public static String convertResult(String text){
+    public static String convertResult(String text) {
         sb = new StringBuilder();
-        for(int i = 0; i < 3; i++){
-            if(text.charAt(i) != 'x'){
+        for (int i = 0; i < 3; i++) {
+            if (text.charAt(i) != 'x') {
                 sb.append(text.charAt(i));
             }
         }
@@ -72,12 +72,20 @@ public class WackServer extends Thread {
                             bw.write(nodeIDindex);
                             bw.flush();
                             System.out.println("Index: " + nodeIDindex + " sent.");
+                            System.out.println("-------------------------");
                             nodeIDindex++;
+
                         } else if (s.contains("result")) {
                             sb.append(s);
+                            System.out.println("-------------------------");
                             s = sb.substring(6, 9);
                             String result = convertResult(s);
+                            System.out.println("Game over.");
                             System.out.println("Score from round: " + result);
+                            System.out.println("-------------------------");
+                            sb.setLength(0);
+                            nodeIDindex = 10; //Resets index to avoid going over 99
+                            sleep(5000); //Sleeps in order to ignore more than one result message
                         }
                     }
                 }
