@@ -74,10 +74,10 @@ public class WackServer extends Thread {
                             System.out.println("Index: " + nodeIDindex + " sent.");
                             System.out.println("-------------------------");
                             nodeIDindex++;
-
                         } else if (s.contains("result")) {
                             sb.append(s);
                             System.out.println("-------------------------");
+                            //System.out.println(s);
                             s = sb.substring(6, 9);
                             String result = convertResult(s);
                             System.out.println("Game over.");
@@ -85,7 +85,7 @@ public class WackServer extends Thread {
                             System.out.println("-------------------------");
                             sb.setLength(0);
                             nodeIDindex = 10; //Resets index to avoid going over 99
-                            sleep(5000); //Sleeps in order to ignore more than one result message
+                            this.sleep(5000); //Sleeps in order to ignore more than one result message
                         }
                     }
                 }
