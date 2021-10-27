@@ -20,6 +20,7 @@ public class WackServer extends Thread {
         sb = new StringBuilder();
     }
 
+    //gets an ID from the server and sends it, synchronized method to avoid threads sending the same index
     public synchronized int getID(){
         int temp = nodeIDindex;
         nodeIDindex++;
