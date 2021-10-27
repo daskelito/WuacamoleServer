@@ -20,6 +20,12 @@ public class WackServer extends Thread {
         sb = new StringBuilder();
     }
 
+    public synchronized int getID(){
+        int temp = nodeIDindex;
+        nodeIDindex++;
+        return temp;
+    }
+
     //Converts the incoming string from a node into a sensible string that can be printed and read.
     public static String convertResult(String text) {
         sb = new StringBuilder();
@@ -69,11 +75,10 @@ public class WackServer extends Thread {
                     //Two cases: either a node requesting an index or a node sending result from the game round.
                     if (s != null) {
                         if (s.contains("index")) {
-                            bw.write(nodeIDindex);
+                            bw.write(getID());
                             bw.flush();
-                            System.out.println("Index: " + nodeIDindex + " sent.");
+                            System.out.println("Index: " + (nodeIDindex - 1) + " sent.");
                             System.out.println("-------------------------");
-                            nodeIDindex++;
                         } else if (s.contains("result")) {
                             sb.append(s);
                             System.out.println("-------------------------");
